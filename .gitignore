@@ -1,0 +1,22 @@
+# Python and build outputs
+__pycache__/
+*.py[cod]
+*.so
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.venv/
+.env
+# Local data, model weights and evaluation products
+checkpoints/
+outputs/
+datasets/
+pretrained/
+wandb/
+lightning_logs/
+results/
+*.ckpt
+*.pth
+*.npz
+*.torch

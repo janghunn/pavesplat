@@ -1,0 +1,24 @@
+diff --git a/cuda_rasterizer/auxiliary.h b/cuda_rasterizer/auxiliary.h
+index 4d4b9b7..792ba9d 100644
+--- a/cuda_rasterizer/auxiliary.h
++++ b/cuda_rasterizer/auxiliary.h
+@@ -14,6 +14,7 @@
+ 
+ #include "config.h"
+ #include "stdio.h"
++#include <cstdint>
+ 
+ #define BLOCK_SIZE (BLOCK_X * BLOCK_Y)
+ #define NUM_WARPS (BLOCK_SIZE/32)
+diff --git a/cuda_rasterizer/rasterizer_impl.h b/cuda_rasterizer/rasterizer_impl.h
+index ff2d117..be319b8 100644
+--- a/cuda_rasterizer/rasterizer_impl.h
++++ b/cuda_rasterizer/rasterizer_impl.h
+@@ -13,6 +13,7 @@
+ 
+ #include <iostream>
+ #include <vector>
++#include <cstdint>
+ #include "rasterizer.h"
+ #include <cuda_runtime_api.h>
+ 

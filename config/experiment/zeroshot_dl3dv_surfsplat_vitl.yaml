@@ -1,0 +1,15 @@
+# @package _global_
+
+defaults:
+- _base/dl3dv
+- _method/surfsplat
+- _backbone/vitl
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: zeroshot_dl3dv_surfsplat_vitl
+  tags:
+  - dl3dv
+  - surfsplat
+  - vitl
+  - zero-shot

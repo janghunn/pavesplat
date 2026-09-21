@@ -1,0 +1,7 @@
+name: splatting_cuda
+# SurfSplat issue #9: the inference alpha threshold must NOT be reused during training, or the
+# 2D Gaussians collapse (shrink / become transparent) and the renders fill with black holes
+# while the loss climbs. Use a larger floor while training and the small value at eval. Applied
+# identically to the baseline and every ablation row, so fair comparison is preserved.
+alpha_threshold_train: 0.1
+alpha_threshold_eval: 0.001

@@ -1,0 +1,14 @@
+# @package _global_
+
+defaults:
+- _base/re10k
+- _method/surfsplat
+- _backbone/vits
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: surfsplat_vits_re10k
+  tags:
+  - re10k
+  - surfsplat
+  - vits

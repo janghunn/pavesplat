@@ -1,0 +1,14 @@
+# @package _global_
+
+defaults:
+- _base/re10k
+- _method/tangent_frame_only
+- _backbone/vitl
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: ablation_tangent_frame_vitl_re10k
+  tags:
+  - re10k
+  - tangent_frame_only
+  - vitl

@@ -1,0 +1,18 @@
+# @package _global_
+
+defaults:
+- _base/acid
+- _method/pavesplat
+- _backbone/vitl
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: zeroshot_acid_pavesplat_vitl
+  tags:
+  - acid
+  - pavesplat
+  - vitl
+  - zero-shot
+train:
+  hrrc_val: true
+  hrrc_val_scenes: 4

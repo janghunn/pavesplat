@@ -1,0 +1,15 @@
+# @package _global_
+
+defaults:
+- _base/scannet
+- _method/surfsplat
+- _backbone/vitl
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: zeroshot_scannet_surfsplat_vitl
+  tags:
+  - scannet
+  - surfsplat
+  - vitl
+  - zero-shot

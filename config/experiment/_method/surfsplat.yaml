@@ -1,0 +1,8 @@
+# @package _global_
+
+model:
+  encoder:
+    gaussian_adapter:
+      camera_space_frame: false
+      tangent_frame: false
+      use_rotation_residual: false

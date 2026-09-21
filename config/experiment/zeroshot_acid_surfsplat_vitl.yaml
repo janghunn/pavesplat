@@ -1,0 +1,15 @@
+# @package _global_
+
+defaults:
+- _base/acid
+- _method/surfsplat
+- _backbone/vitl
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: zeroshot_acid_surfsplat_vitl
+  tags:
+  - acid
+  - surfsplat
+  - vitl
+  - zero-shot

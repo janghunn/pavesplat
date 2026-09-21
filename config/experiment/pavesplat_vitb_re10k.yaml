@@ -1,0 +1,14 @@
+# @package _global_
+
+defaults:
+- _base/re10k
+- _method/pavesplat
+- _backbone/vitb
+- _schedule/re10k_150k
+- _self_
+wandb:
+  name: pavesplat_vitb_re10k
+  tags:
+  - re10k
+  - pavesplat
+  - vitb

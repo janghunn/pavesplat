@@ -1,0 +1,10 @@
+# @package _global_
+# Effective batch = batch_size × visible GPUs × accumulate_grad_batches must equal 32.
+# The paper runs used 2 GPUs; scripts/train_re10k.sh sets accumulation from the GPU count.
+
+trainer:
+  max_steps: 150001
+  accumulate_grad_batches: 4
+data_loader:
+  train:
+    batch_size: 4

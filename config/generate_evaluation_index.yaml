@@ -1,0 +1,23 @@
+# RE10K/ACID indices are frozen pixelSplat indices; regeneration draws new random pairs.
+# ScanNet uses src/scripts/generate_scannet_eval_index.py.
+defaults:
+- main
+- override dataset/view_sampler: all
+- _self_
+data_loader:
+  train:
+    batch_size: 1
+  val:
+    batch_size: 1
+  test:
+    batch_size: 1
+index_generator:
+  num_target_views: 3
+  min_overlap: 0.6
+  max_overlap: 1.0
+  min_distance: 45
+  max_distance: 135
+  output_path: outputs/evaluation_index_re10k
+  save_previews: false
+  seed: 123
+seed: 456
