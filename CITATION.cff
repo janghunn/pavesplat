@@ -1,7 +1,8 @@
 cff-version: 1.2.0
-message: "Please cite the ACCV 2026 paper using preferred-citation. Complete [TBD: url], [TBD: pages/start/end] and [TBD: BibTeX key] before release."
+message: "If you use this software, please cite the ACCV 2026 paper below (preferred-citation)."
 type: software
 repository-code: https://github.com/janghunn/pavesplat
+url: "https://janghunn.github.io/pavesplat/"
 title: "PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances"
 authors:
   - family-names: Kim
@@ -10,7 +11,7 @@ authors:
     given-names: Hyun-Cheol
   - family-names: An
     given-names: Eunbin
-  - family-names: OH
+  - family-names: Oh
     given-names: Myeonghun
   - family-names: Choo
     given-names: Hyon-Gon
@@ -25,7 +26,7 @@ preferred-citation:
       given-names: Hyun-Cheol
     - family-names: An
       given-names: Eunbin
-    - family-names: OH
+    - family-names: Oh
       given-names: Myeonghun
     - family-names: Choo
       given-names: Hyon-Gon
@@ -33,6 +34,3 @@ preferred-citation:
     name: ACCV 2026
   collection-title: "Proceedings of the Asian Conference on Computer Vision (ACCV)"
   year: 2026
-  # Complete publication metadata before citation export.
-  # [TBD: url]
-  # [TBD: pages/start/end]

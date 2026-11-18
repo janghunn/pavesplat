@@ -1,12 +1,12 @@
 # PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances
 
-**ACCV 2026** · Janghun Kim, Hyun-Cheol Kim, Eunbin An, Myeonghun OH, Hyon-Gon Choo
+**ACCV 2026** · Janghun Kim, Hyun-Cheol Kim, Eunbin An, Myeonghun Oh, Hyon-Gon Choo
 
 ETRI, South Korea
 
 PaveSplat learns a residual reorientation Δq of a surface-aligned covariance prior, maintaining surface paving when Gaussian splats are rendered at higher resolutions.
 
-[TBD: arXiv link] · [TBD: project page] · [code](https://github.com/janghunn/pavesplat) · [checkpoints](https://huggingface.co/janghunn/pavesplat) (private until the camera-ready)
+[project page](https://janghunn.github.io/pavesplat/) · [code](https://github.com/janghunn/pavesplat) · [checkpoints](https://huggingface.co/janghunn/pavesplat)
 
 The coordinate-consistent formulation constructs the tangent-aligned frame `R_a=[e1 e2 n]` and applies `q = q_a ⊗ Δq` (paper Eqs. 2–6; supplement Algorithm 1). The residual adds 9,512 head parameters. The released SurfSplat‡ reproduction retains its world-space branch and shares the backbone, losses, opacity cap, alpha thresholds and rasterizer.
 
@@ -47,6 +47,8 @@ python src/scripts/generate_scannet_eval_index.py --raw_test datasets/scannet_ra
 These conversion commands require data and were not executed here. ScanNet’s SurfSplat split is unreleased: our zero-shot protocol uses its slicing convention and the repository’s overlap geometry with seed 0, yielding 635 slices (633 with GT depth), as described in supplement section 3. Nominal slices have 350 frames and 20-frame overlap; the converter merges a remaining tail shorter than 100 frames. Both methods consume the same frozen index. ScanNet geometry results refer to **rendered-normal error**.
 
 DL3DV follows the paper’s unified **256×256** protocol, retains the original 270×480 shape check, uses the 2-context/4-target index and near/far 0.5/200, and drops one scene with inconsistent frame dimensions (`skip_bad_shape=true`), leaving **139 scenes**.
+
+**Dataset terms:** No dataset is redistributed. Obtain each dataset from its official source and accept its terms: [RealEstate10K](https://google.github.io/realestate10k/) camera data is CC BY 4.0 (Google LLC); for [ACID](https://infinite-nature.github.io/), follow the terms on the official page; [DL3DV-10K](https://github.com/DL3DV-10K/Dataset) is under the DL3DV-10K Terms of Use and CC BY-NC 4.0; [ScanNet](http://www.scan-net.org/) is under the ScanNet Terms of Use.
 
 ## Pretrained weights
 
@@ -109,15 +111,14 @@ These tools accept `--help`; the data-dependent analyses were not executed here.
 
 ## Citation
 
-Bibliography fields and publication links to fill are marked with `[TBD: <what>]`:
+If you use this code, please cite:
 
 ```bibtex
-% [TBD: BibTeX key, pages, URL]
-@inproceedings{KEY-TBD, comment = {[TBD: BibTeX key]},
-  title={PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances},
-  author={Kim, Janghun and Kim, Hyun-Cheol and An, Eunbin and OH, Myeonghun and Choo, Hyon-Gon},
-  booktitle={ACCV},
-  year={2026}
+@inproceedings{kim2026pavesplat,
+  title     = {PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances},
+  author    = {Janghun Kim and Hyun-Cheol Kim and Eunbin An and Myeonghun Oh and Hyon-Gon Choo},
+  booktitle = {Proceedings of the Asian Conference on Computer Vision (ACCV)},
+  year      = {2026}
 }
 ```
 
@@ -127,4 +128,4 @@ Built on [SurfSplat](https://github.com/hebing-sjtu/SurfSplat), [DepthSplat](htt
 
 ## License
 
-Code is under [CC BY-NC-SA 4.0](LICENSE). The rasterizer retains its [research-only Gaussian-Splatting license](submodules/rasterization/LICENSE.md). Selected ViT-L checkpoint weights are designated CC-BY-NC-4.0 because of their Depth Anything V2 lineage. See [full third-party notices](THIRD_PARTY_NOTICES.md); individual components and external weights retain their own terms.
+Code is under [CC BY-NC-SA 4.0](LICENSE). The rasterizer retains its [research-only Gaussian-Splatting license](submodules/rasterization/LICENSE.md). Selected ViT-L checkpoint weights are designated CC-BY-NC-4.0 because of their Depth Anything V2 lineage. See [full third-party notices](THIRD_PARTY_NOTICES.md); individual components and external weights retain their own terms. Dataset terms are listed under [Data](#data).

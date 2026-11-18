@@ -2,7 +2,7 @@
 
 Evaluation always runs on a single GPU; pass `--gpu N` to choose it.
 
-Every retained code-produced artifact in the main paper, supplement and final rebuttal is listed below. Commands are run from the repository root. Model files are local aliases from [CHECKPOINTS.md](CHECKPOINTS.md); its download links require access to the private model repository until the camera-ready. Full training, conversion, statistics over paper outputs and full evaluation were **not executed here**. The documentation gate checks shell help/dry-run commands and composes their Hydra arguments, and checks Python tools with `--help`.
+Every retained code-produced artifact in the main paper, supplement and final rebuttal is listed below. Commands are run from the repository root. Model files are local aliases from [CHECKPOINTS.md](CHECKPOINTS.md). Full training, conversion, statistics over paper outputs and full evaluation were **not executed here**. The documentation gate checks shell help/dry-run commands and composes their Hydra arguments, and checks Python tools with `--help`.
 
 Standard HRRC scores 1×/2×/4× against bicubic GT. With `--images`, the 8×-only pass writes predictions only; `*_gt.png` and `input_*.png` come from the standard `--images` pass. The separate `--8x` pass renders 1×/8× and scores 8×, with metric suffixes none/2/3/4 denoting 1×/2×/4×/8×. Per-scene arrays are aligned positionally by `metrics/scenes_all.json`; never sort scores independently. Black-hole fraction uses rendered max RGB < ε and GT max RGB > ε, with max RGB as the luma proxy; ε is 0.02 with a 0.01/0.02/0.05 sweep. Accumulated-alpha coverage is a separate diagnostic.
 

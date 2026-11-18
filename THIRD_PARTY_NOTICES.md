@@ -113,10 +113,86 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+The MIT license text above also applies to the following components, with their respective copyright notices.
+
+### Swin Transformer
+
+`src/model/encoder/unimatch/mv_transformer.py` and `src/model/encoder/unimatch/utils.py` contain adapted code. [Upstream license](https://github.com/microsoft/Swin-Transformer/blob/main/LICENSE).
+
+Copyright (c) Microsoft Corporation.
+
+### OpenAI CLIP
+
+`src/model/encoder/unimatch/ldm_unet/unet.py` contains adapted code. [Upstream license](https://github.com/openai/CLIP/blob/main/LICENSE).
+
+Copyright (c) 2021 OpenAI
+
+### OpenAI improved-diffusion
+
+`src/model/encoder/unimatch/ldm_unet/util.py` contains adapted code. [Upstream license](https://github.com/openai/improved-diffusion/blob/main/LICENSE).
+
+Copyright (c) 2021 OpenAI
+
+### OpenAI guided-diffusion
+
+`src/model/encoder/unimatch/ldm_unet/util.py` contains adapted code. [Upstream license](https://github.com/openai/guided-diffusion/blob/main/LICENSE).
+
+Copyright (c) 2021 OpenAI
+
+### denoising-diffusion-pytorch
+
+`src/model/encoder/unimatch/ldm_unet/util.py` contains adapted code. [Upstream license](https://github.com/lucidrains/denoising-diffusion-pytorch/blob/master/LICENSE).
+
+Copyright (c) 2020 Phil Wang
+
+`hojonathanho/diffusion` is cited in `src/model/encoder/unimatch/ldm_unet/unet.py` only as a behavioural reference.
+
+## BSD-3-Clause components
+
+### PyTorch3D
+
+`src/model/encoder/common/gaussians.py` contains adapted code. [Upstream license](https://github.com/facebookresearch/pytorch3d/blob/main/LICENSE).
+
+```text
+BSD License
+
+For PyTorch3D software
+
+Copyright (c) Meta Platforms, Inc. and affiliates. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+ * Neither the name Meta nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+```
+
 ## Apache License 2.0 components and external weights
 
 - `src/misc/render_utils.py`: Copyright 2022 Google LLC. Its Apache-2.0 header is retained; see the [Apache license](https://www.apache.org/licenses/LICENSE-2.0).
 - `src/model/encoder/unimatch/position.py`: Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved. Adapted from [DETR](https://github.com/facebookresearch/detr/blob/main/LICENSE), under Apache-2.0.
+- [DynIBaR](https://github.com/google/dynibar/blob/main/LICENSE) (Google): `src/misc/stablize_camera.py` contains adapted code under Apache-2.0. The upstream LICENSE does not state a component-specific copyright line.
+- [Detectron2](https://github.com/facebookresearch/detectron2/blob/main/LICENSE) (Facebook/Meta): `src/model/encoder/unimatch/vit_fpn.py` contains adapted code under Apache-2.0. The upstream LICENSE does not state a component-specific copyright line.
+- [GMFlow pretrained weights](https://github.com/haofeixu/gmflow/blob/main/LICENSE) (`haofeixu/gmflow`): Copyright 2022, Haofei Xu. `gmflow-scale1-things-e9887eda.pth` is Apache-2.0, downloaded separately and loaded by `scripts/train_re10k.sh`.
 - [Depth Anything V2 code](https://github.com/DepthAnything/Depth-Anything-V2/blob/main/LICENSE) is Apache-2.0. Its [ViT-S weights](https://github.com/DepthAnything/Depth-Anything-V2#license) are Apache-2.0; ViT-B/L weights are CC-BY-NC-4.0. These external weights are downloaded separately.
 - [DINOv2](https://github.com/facebookresearch/dinov2#license) original vision backbones, code and weights are Apache-2.0. PaveSplat uses those vision backbones through `torch.hub`.
 

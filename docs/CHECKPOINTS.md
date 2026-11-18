@@ -1,6 +1,6 @@
 # Checkpoint compatibility
 
-Two ViT-L checkpoints are selected for release in the [Hugging Face model repository](https://huggingface.co/janghunn/pavesplat), currently private until the camera-ready. Download [PaveSplat ViT-L](https://huggingface.co/janghunn/pavesplat/resolve/main/pavesplat_vitl_re10k.ckpt), [SurfSplat‡ ViT-L](https://huggingface.co/janghunn/pavesplat/resolve/main/surfsplat_vitl_re10k.ckpt), and [SHA256SUMS](https://huggingface.co/janghunn/pavesplat/resolve/main/SHA256SUMS) with access to that repository. The tables below identify the verified raw Lightning files and weights-only release files, without bundling weights in the code repository.
+Two ViT-L checkpoints are selected for release in the [Hugging Face model repository](https://huggingface.co/janghunn/pavesplat). Download [PaveSplat ViT-L](https://huggingface.co/janghunn/pavesplat/resolve/main/pavesplat_vitl_re10k.ckpt), [SurfSplat‡ ViT-L](https://huggingface.co/janghunn/pavesplat/resolve/main/surfsplat_vitl_re10k.ckpt), and [SHA256SUMS](https://huggingface.co/janghunn/pavesplat/resolve/main/SHA256SUMS). The tables below identify the verified raw Lightning files and weights-only release files, without bundling weights in the code repository.
 
 | Model / paper rows | Experiment | Raw file | Size (bytes) | SHA256 | State dictionary |
 |---|---|---|---:|---|---|
@@ -24,7 +24,7 @@ The designated checkpoint license is **CC-BY-NC-4.0**, reflecting the [Depth Any
 
 | Model | Config | Raw size (bytes) | Availability / paper row |
 |---|---|---:|---|
-| PaveSplat ViT-S | `pavesplat_vits_re10k` | 460884982 | Not released; config provided. Retrained model gives 27.107 dB in rebuttal Table B; original 27.100 dB checkpoint from supplement Table 4 is unavailable. |
+| PaveSplat ViT-S | `pavesplat_vits_re10k` | 460884982 | Not released; config provided. The retrained checkpoint gives 27.107 dB, printed in camera-ready supplement Table 4 and rebuttal Table B; the original checkpoint behind the submission-version 27.100 dB is unavailable. |
 | SurfSplat‡ ViT-S | `surfsplat_vits_re10k` | 460798582 | Not released; config provided. Supplement Table 4 / rebuttal Table B. |
 | PaveSplat ViT-B | `pavesplat_vitb_re10k` | 1449943958 | Not released; config provided. Supplement Table 4 / rebuttal Table B. |
 | + tangent frame, ViT-L | `ablation_tangent_frame_vitl_re10k` | 4253120438 | Not released; config provided. Main Table 4 / rebuttal black-hole analysis. |
