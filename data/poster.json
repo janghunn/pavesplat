@@ -1,0 +1,60 @@
+{
+  "description": "Poster plots redrawn from the paper tables. Values are printed strings; 'row' is only the vertical position (in plot units) of an end label, nudged apart where lines end close together.",
+  "scales": ["1×", "2×", "4×", "8×"],
+  "plots": {
+    "re10k": {
+      "source": "main Tab. 1",
+      "title": "RealEstate10K PSNR (dB) versus render scale",
+      "unit": "dB", "ylabel": "PSNR (dB)", "ymin": 14, "ymax": 29, "ticks": [15, 20, 25], "height": 260,
+      "series": [
+        {"method": "MVSplat", "style": "mv", "values": ["26.387", "20.294", "17.882", "17.195"]},
+        {"method": "TranSplat", "style": "tran", "values": ["26.688", "20.499", "18.071", "17.383"]},
+        {"method": "DepthSplat", "style": "depth", "values": ["27.506", "19.914", "16.299", "15.079"]},
+        {"method": "SurfSplat‡", "style": "surf", "values": ["27.519", "26.366", "24.863", "23.342"]},
+        {"method": "PaveSplat", "style": "pave", "values": ["27.686", "26.493", "25.182", "24.266"]}
+      ],
+      "labels": [
+        {"method": "PaveSplat", "row": 25.0, "value": "24.266"},
+        {"method": "SurfSplat‡", "row": 22.7, "value": "23.342"},
+        {"method": "TranSplat", "row": 18.5},
+        {"method": "MVSplat", "row": 16.7},
+        {"method": "DepthSplat", "row": 14.9}
+      ]
+    },
+    "dl3dv": {
+      "source": "main Tab. 2",
+      "title": "Zero-shot DL3DV PSNR (dB) versus render scale, trained on RealEstate10K",
+      "unit": "dB", "ylabel": "PSNR (dB)", "ymin": 10, "ymax": 30, "ticks": [10, 15, 20, 25, 30], "height": 260,
+      "series": [
+        {"method": "MVSplat", "style": "mv", "values": ["24.545", "18.745", "16.322", "15.639"]},
+        {"method": "TranSplat", "style": "tran", "values": ["24.711", "20.081", "18.052", "17.485"]},
+        {"method": "DepthSplat", "style": "depth", "values": ["28.145", "16.780", "12.747", "11.529"]},
+        {"method": "SurfSplat‡", "style": "surf", "values": ["27.421", "25.495", "18.721", "14.388"]},
+        {"method": "PaveSplat", "style": "pave", "values": ["28.389", "26.714", "23.129", "20.671"]}
+      ],
+      "labels": [
+        {"method": "PaveSplat", "row": 20.671, "value": "20.671"},
+        {"method": "TranSplat", "row": 18.35},
+        {"method": "MVSplat", "row": 16.3},
+        {"method": "SurfSplat‡", "row": 14.2, "value": "14.388"},
+        {"method": "DepthSplat", "row": 11.529}
+      ]
+    },
+    "holes": {
+      "source": "supp Tab. 3 (mean, ε = 0.02)",
+      "title": "Coverage holes (% of pixels, log axis) versus render scale",
+      "unit": "%", "ylabel": "holes (% of pixels)", "log": true, "ymin": 0.01, "ymax": 10,
+      "ticks": [0.01, 0.1, 1, 10], "height": 220,
+      "series": [
+        {"method": "DepthSplat", "style": "depth", "values": ["0.021", "0.170", "1.921", "4.291"]},
+        {"method": "SurfSplat‡", "style": "surf", "values": ["0.034", "0.052", "0.294", "1.004"]},
+        {"method": "PaveSplat", "style": "pave", "values": ["0.028", "0.046", "0.272", "0.784"]}
+      ],
+      "labels": [
+        {"method": "DepthSplat", "row": 4.6, "value": "4.29%"},
+        {"method": "SurfSplat‡", "row": 1.45, "value": "1.00%"},
+        {"method": "PaveSplat", "row": 0.43, "value": "0.78%"}
+      ]
+    }
+  }
+}

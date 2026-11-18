@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script>
+/* Pre-paint: theme from ?theme=, then the saved choice, then the system; language from ?lang=, then the saved choice, then English. */
+(function () {
+  var d = document.documentElement, q, t, l;
+  try { q = new URLSearchParams(location.search); t = q.get('theme'); l = q.get('lang'); } catch (e) {}
+  function saved(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  if (t !== 'light' && t !== 'dark') t = saved('ws-theme');
+  if (t !== 'light' && t !== 'dark') t = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  if (l !== 'en' && l !== 'ko') l = saved('ws-lang');
+  if (l !== 'en' && l !== 'ko') l = 'en';
+  d.setAttribute('data-theme', t);
+  d.lang = l;
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title data-ko="PaveSplat: 잔차 보정된 표면 정렬 공분산을 이용한 해상도 강건 피드포워드 가우시안 스플래팅">PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances</title>
+<meta name="description" content="PaveSplat: residually corrected surface-aligned covariances for resolution-robust feed-forward Gaussian splatting.">
+<meta property="og:title" content="PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances">
+<meta property="og:description" content="Residually corrected surface-aligned covariances for resolution-robust feed-forward Gaussian splatting. ACCV 2026.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://janghunn.github.io/pavesplat/assets/img/social.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://janghunn.github.io/pavesplat/assets/img/social.png">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="mask-icon" href="assets/img/mark.svg">
+<!--
+  PaveSplat project page in the Paper & Lamp house style (project template), accent pave-blue in both themes.
+  The kit files are copied unchanged into assets/ (tokens.css differs only in its two ACCENT blocks); page layout
+  is in assets/css/site.css, page behaviour (video control, Korean for generated text) in assets/js/page.js.
+  English stays in the markup; Korean sits beside it in data-ko attributes. See README.md.
+-->
+<link rel="preload" href="assets/fonts/Lato-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Lato-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/accents.css">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/page.js" defer></script>
+<script src="assets/js/kit.js" defer></script>
+</head>
+<body id="top">
+<a class="skip" href="#main" data-ko="본문으로 건너뛰기">Skip to content</a>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top" aria-label="PaveSplat home" data-ko-label="PaveSplat 처음으로">
+    <svg class="pave-mark" viewBox="0 0 32 32" aria-hidden="true"><ellipse cx="8" cy="8" rx="7" ry="5.5"/><ellipse cx="24" cy="8" rx="7" ry="5.5"/><ellipse cx="8" cy="24" rx="7" ry="5.5"/><ellipse cx="24" cy="24" rx="7" ry="5.5"/></svg>PaveSplat
+  </a>
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="section-nav" hidden data-ko="메뉴">Menu</button>
+  <nav id="section-nav" aria-label="Sections" data-ko-label="섹션"><a href="#video" data-ko="영상">Video</a><a href="#abstract" data-ko="초록">Abstract</a><a href="#problem" data-ko="문제">Problem</a><a href="#method" data-ko="방법">Method</a><a href="#results" data-ko="결과">Results</a><a href="#mechanism" data-ko="메커니즘">Mechanism</a><a href="#bibtex">BibTeX</a></nav>
+  <div class="controls">
+    <button class="ctl icon" type="button" data-theme-toggle aria-label="Switch to dark theme">
+      <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/></svg>
+      <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+    </button>
+    <button class="ctl" type="button" data-lang-toggle lang="ko">한국어</button>
+  </div>
+</div></header>
+<main id="main" tabindex="-1">
+<section id="masthead" class="masthead" aria-label="Title, authors and resources" data-ko-label="제목, 저자, 자료"><div class="wrap">
+  <svg class="mark pave-mark" viewBox="0 0 32 32" width="104" height="104" aria-hidden="true"><ellipse cx="8" cy="8" rx="7" ry="5.5"/><ellipse class="p2" cx="24" cy="8" rx="7" ry="5.5"/><ellipse class="p2" cx="8" cy="24" rx="7" ry="5.5"/><ellipse cx="24" cy="24" rx="7" ry="5.5"/></svg>
+  <div class="title-block">
+    <h1 id="paper-title"><span class="t-brand">PaveSplat:</span> <span class="t-sub" data-ko="잔차 보정된 표면 정렬 공분산을 이용한 해상도 강건 피드포워드 가우시안 스플래팅">Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances</span></h1>
+    <p class="authors byline"><span id="authors" class="author-list">Janghun Kim<sup class="corresponding-mark" role="img" aria-label="corresponding author" data-ko-label="교신저자"></sup>, Hyun-Cheol Kim, Eunbin An, Myeonghun Oh, Hyon-Gon Choo</span><span id="affiliation" class="affiliation" data-ko="한국전자통신연구원(ETRI), 대한민국">Electronics and Telecommunications Research Institute (ETRI), South Korea</span><span class="corresponding-line"><span data-ko="✉ 교신저자:">✉ Corresponding author:</span> <a id="corresponding-email" href="mailto:janghun@etri.re.kr">janghun@etri.re.kr</a></span></p>
+    <div class="btns paper-links">
+      <a class="btn primary" data-link="code" href="https://github.com/janghunn/pavesplat" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+        <span data-ko="코드">Code</span>
+      </a>
+      <a class="btn" data-link="model" href="https://huggingface.co/janghunn/pavesplat" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+        <span data-ko="모델">Model</span>
+      </a>
+      <a class="btn" href="#video">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/></svg>
+        <span data-ko="영상">Video</span>
+      </a>
+      <a class="btn" data-link="poster" href="assets/pdf/pavesplat-accv2026-poster.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
+        <span data-ko="포스터">Poster</span>
+      </a>
+    </div>
+  </div>
+  <div class="brand-block">
+    <div class="logo-row">
+      <span class="logo-plate"><img src="assets/img/org-logo.svg" width="445" height="163" alt="ETRI, Electronics and Telecommunications Research Institute"></span>
+      <span class="logo-plate"><img src="assets/img/accv2026-logo-1x.webp" srcset="assets/img/accv2026-logo-1x.webp 168w, assets/img/accv2026-logo.webp 335w, assets/img/accv2026-logo-3x.webp 502w, assets/img/accv2026-logo-full.webp 2018w" sizes="(min-width: 860px) 168px, (min-width: 640px) 134px, 117px" width="168" height="40" alt="ACCV 2026, Osaka, Japan, December 14–18, 2026"></span>
+    </div>
+    <p class="venue"><span id="venue" data-ko="ACCV 2026 · 일본 오사카">ACCV 2026 · Osaka, Japan</span> <span class="venue-dates" data-ko="2026년 12월 14–18일">Dec 14–18, 2026</span></p>
+  </div>
+</div></section>
+
+<section id="video" aria-label="Supplementary video" data-ko-label="보충 영상"><div class="wrap">
+  <figure class="video-fig">
+    <div class="video-stage">
+      <video data-autoplay muted loop playsinline controls preload="none" width="1280" height="720" poster="assets/media/supp-poster.webp"
+             aria-label="Supplementary video (96.7 s): the re-rendering idea (illustration), real re-renders at 1×–8×, coverage holes, test-set results, covariance ellipsoids."
+             data-ko-label="보충 영상(96.7 s): 재렌더링 아이디어(일러스트), 1×–8× 실제 재렌더링, 커버리지 구멍, 테스트셋 결과, 공분산 타원체."
+             data-label-pause="Pause video" data-label-play="Play video">
+        <source src="assets/media/pavesplat-video-web.mp4" type="video/mp4">
+      </video>
+    </div>
+    <figcaption class="caption" data-ko="보충 영상(96.7 s): 재렌더링 아이디어(일러스트), 1×–8× 실제 재렌더링, 커버리지 구멍, 테스트셋 결과, 공분산 타원체.">Supplementary video (96.7 s): the re-rendering idea (illustration), real re-renders at 1×–8×, coverage holes, test-set results, covariance ellipsoids.</figcaption>
+  </figure>
+</div></section>
+
+<section id="takeaway" aria-labelledby="tldr-label"><div class="wrap"><div class="band">
+  <p class="tldr-label" id="tldr-label" data-ko="요약">TL;DR</p>
+  <p data-ko="Feed-forward 3DGS가 예측한 공분산(스케일, 회전)은 학습 해상도에서는 잘 맞지만, 같은 예측을 더 높은 해상도로 다시 렌더링하면 구멍이 생깁니다.">Feed-forward 3DGS predicts covariances (scale, rotation) that work well at the training resolution — but re-render the same prediction at a higher resolution and holes open.</p>
+  <p data-html data-ko="PaveSplat은 해석적 표면 정렬 프레임을 유지하면서 항등으로 초기화한 회전 잔차 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math> 하나를 학습하므로, surfel이 계속 표면을 포장하듯 덮습니다.">PaveSplat keeps the analytic surface-aligned frame and learns one identity-initialized rotation residual <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math>, so surfels keep paving the surface.</p>
+</div></div></section>
+
+<section id="abstract" aria-labelledby="abstract-title"><div class="wrap"><details class="card abstract">
+  <summary><h2 id="abstract-title" data-ko="초록">Abstract</h2></summary>
+  <p id="abstract-text" data-ko="PaveSplat은 해석적 표면 정렬 공분산에 학습된 잔차를 더해, 렌더링 해상도가 달라져도 surfel이 보이는 표면을 계속 덮도록 하는 feed-forward Gaussian splatting 방법입니다. 픽셀 정렬 feed-forward Gaussian splatting은 몇 장의 이미지로부터 한 번의 추론으로 픽셀마다 프리미티브 하나를 예측하며, 렌더링 품질은 이 프리미티브들이 표면을 얼마나 잘 덮는지에 달려 있습니다. 최근의 surfel 기반 방법은 예측한 깊이로부터 표면 정렬 공분산을 해석적으로 계산합니다. 그러나 이 공분산에는 깊이에서 유도한 프레임이 불량 조건(ill-posed)인 곳에서 surfel 방향을 바로잡을 방법이 없습니다. 그 결과 surfel이 표면을 성기게 덮습니다. 학습 해상도에서는 각 surfel의 한 픽셀 크기 최소 footprint가 틈을 가리지만, 같은 예측을 더 높은 해상도로 다시 렌더링하면 그 틈이 구멍으로 드러납니다. 이를 해결하기 위해, 축이 표면 접선에 정렬된 해석적 공분산을 초기값으로 유지하고, 렌더링이 나아지는 곳에서만 surfel의 방향을 다시 잡는 항등 초기화 단위 쿼터니언 잔차를 더해, 해석적 프레임이 잘못 겨눈 surfel을 표면 위로 되돌립니다. RealEstate10K에서 PaveSplat은 픽셀당 단일 Gaussian 방법 가운데 모든 배율(1×–8×)에서 가장 좋은 PSNR, SSIM, LPIPS를 달성합니다. 원래 해상도에서의 이득은 작으며, 이점은 네트워크를 다시 실행하지 않고 같은 예측을 더 높은 디스플레이 해상도로 렌더링할 때 나타납니다. Zero-shot DL3DV에서는 이 그룹 안에서 모든 배율의 PSNR이 가장 높고, SSIM/LPIPS에서는 첫 번째 또는 두 번째입니다. 커버리지 구멍 분석에서도 고해상도 재렌더링 시 두 기준 방법보다 덮이지 않은 픽셀이 적습니다.">We present PaveSplat, a feed-forward Gaussian splatting method that adds a learned residual to the analytic surface-aligned covariance, keeping surfels paving the visible surface across rendering resolutions. Pixel-aligned feed-forward Gaussian splatting predicts one primitive per pixel from a few images in a single pass, and its rendering quality depends on how well these primitives cover the surface. Recent surfel-based methods compute the surface-aligned covariance analytically from predicted depth. However, this covariance has no way to correct the surfel orientation where the depth-derived frame is ill-posed. The surfels then cover the surface loosely; at the training resolution each surfel’s one-pixel minimum footprint covers the gaps, but they show up as holes when the same prediction is re-rendered at a higher resolution. To address this, we keep the analytic covariance as an initialization, with its axes aligned to the surface tangents, and add an identity-initialized unit-quaternion residual that reorients a surfel only where this improves rendering, turning surfels that the analytic frame mis-aims back onto the surface. On RealEstate10K, PaveSplat achieves the best PSNR, SSIM, and LPIPS among single-Gaussian-per-pixel methods at every scale (1×–8×). The native-resolution gain is small; the benefit appears when the same prediction is rendered at higher display resolutions without re-running the network. On zero-shot DL3DV, it leads PSNR within this group at every scale and ranks first or second on SSIM/LPIPS. A coverage-hole analysis shows fewer uncovered pixels than both baselines under high-resolution re-rendering.</p>
+</details></div></section>
+
+<section id="problem" aria-labelledby="problem-title"><div class="wrap"><div class="card">
+  <div class="panel-head"><span class="disc" aria-hidden="true">1</span><h2 id="problem-title" data-ko="문제: 고해상도에서 생기는 구멍">The problem: holes at high resolution</h2></div>
+  <div class="cols">
+    <figure class="figure-pair hero-pair">
+      <div class="tile compare surf"><p class="tile-label">SurfSplat‡</p><div class="tile-frame"><img class="crop" src="assets/img/figures/hero-surfsplat-8x.webp" width="2048" height="2048" decoding="async" alt="SurfSplat‡ at 8×: rows of black holes open across the wall and the doorway"><div class="inset"><img src="assets/img/figures/hero-surfsplat-1x.webp" width="256" height="256" decoding="async" alt="SurfSplat‡ at 1×: the same prediction looks covered"><span class="crop-box" aria-hidden="true"></span><span class="pill" aria-hidden="true">1×</span></div><span class="pill" aria-hidden="true">8×</span></div></div>
+      <div class="tile ours pave"><p class="tile-label" data-ko="PaveSplat (제안)">PaveSplat (ours)</p><div class="tile-frame"><img class="crop" src="assets/img/figures/hero-pavesplat-8x.webp" width="2048" height="2048" decoding="async" alt="PaveSplat at 8×: the wall and the doorway stay covered"><div class="inset"><img src="assets/img/figures/hero-pavesplat-1x.webp" width="256" height="256" decoding="async" alt="PaveSplat at 1×"><span class="crop-box" aria-hidden="true"></span><span class="pill" aria-hidden="true">1×</span></div><span class="pill" aria-hidden="true">8×</span></div></div>
+      <figcaption class="caption" data-ko="같은 예측을 8×(2048²)로 다시 렌더링한 결과입니다. 삽입 그림: 1×(256²) 프레임, 점선 상자 = 8× 크롭 영역. SurfSplat‡ = 동일 레시피 재현.">Same prediction re-rendered at 8× (2048²). Insets: the 1× (256²) frame, dashed box = the 8× crop. SurfSplat‡ = same-recipe reproduction.</figcaption>
+    </figure>
+    <ul class="bullets">
+      <li data-html data-ko="대부분의 feed-forward 3DGS 방법은 몇 개의 입력 뷰로부터 한 번의 추론으로 픽셀 정렬 Gaussian을 예측하며, 보통 <b>픽셀당 하나</b>입니다.">Most feed-forward 3DGS methods predict pixel-aligned Gaussians — typically <b>one per pixel</b> — from a few input views in a single pass.</li>
+      <li data-html data-ko="1×에서는 각 surfel의 <b>한 픽셀 크기 최소 footprint</b>가 성기게 놓인 surfel 사이의 틈을 가립니다.">At 1×, each surfel’s <b>one-pixel minimum footprint</b> hides the gaps between loosely placed surfels.</li>
+      <li data-html data-ko="같은 예측을 2×–8× 더 조밀한 격자에서 다시 렌더링하면 그 틈이 <b>구멍으로 드러납니다</b>.">Re-render the same prediction on a 2×–8× denser grid and the gaps <b>show up as holes</b>.</li>
+      <li data-html data-ko="근본 원인: 깊이는 픽셀 footprint로부터 각 surfel의 크기를 정하지만, 그 크기는 방향이 맞을 때만 표면을 덮습니다. 그런데 해석적 surfel에는 깊이 경계, 얇은 구조, 비스듬한(grazing) 표면에서 잘못 겨눈 surfel을 바로잡을 <b>학습된 방향이 없습니다</b>.">Root cause: depth sets each surfel’s size from its pixel footprint, but that size only covers the surface if the orientation is right — and analytic surfels have <b>no learned orientation</b> to fix mis-aimed ones at depth edges, thin structures and grazing surfaces.</li>
+    </ul>
+  </div>
+</div></div></section>
+
+<section id="method" aria-labelledby="method-title"><div class="wrap"><div class="card">
+  <div class="panel-head"><span class="disc" aria-hidden="true">2</span><h2 id="method-title" data-ko="방법: 보정 가능한 표면 정렬 공분산">Method: a correctable surface-aligned covariance</h2></div>
+  <h3 class="panel-title" data-ko="surfel로 표면을 덮는 세 가지 방식">Three ways to cover a surface with surfels</h3>
+  <div class="regimes">
+    <figure class="regime"><h4 data-ko="(a) 완전 학습">(a) Fully learned</h4><div class="figure-frame"><img src="assets/img/figures/regime-a-640.webp" srcset="assets/img/figures/regime-a-640.webp 640w, assets/img/figures/regime-a-960.webp 960w" sizes="(max-width: 639px) 92vw, (max-width: 959px) 46vw, 340px" width="640" height="359" loading="lazy" decoding="async" alt="Fully learned covariances drawn as ellipsoids from a novel view: scale is uncontrolled, so oversized ellipsoids over-spread"><img src="assets/img/figures/regime-a-schema.svg" width="640" height="201" loading="lazy" alt="Schematic: surfels of uncontrolled size along a surface"></div><figcaption data-ko="스케일 통제 없음">scale uncontrolled</figcaption></figure>
+    <figure class="regime"><h4 data-ko="(b) 해석적">(b) Analytic</h4><div class="figure-frame"><img src="assets/img/figures/regime-b-640.webp" srcset="assets/img/figures/regime-b-640.webp 640w, assets/img/figures/regime-b-960.webp 960w" sizes="(max-width: 639px) 92vw, (max-width: 959px) 46vw, 340px" width="640" height="359" loading="lazy" decoding="async" alt="Analytic surface-aligned covariances from a novel view: the frame is set from depth, leaving anisotropic surfels mis-oriented"><img src="assets/img/figures/regime-b-schema.svg" width="640" height="201" loading="lazy" alt="Schematic: analytic surfels mis-oriented at a depth edge"></div><figcaption data-ko="깊이로 고정된 프레임">frame fixed by depth</figcaption></figure>
+    <figure class="regime"><h4>(c) PaveSplat</h4><div class="figure-frame"><img src="assets/img/figures/regime-c-640.webp" srcset="assets/img/figures/regime-c-640.webp 640w, assets/img/figures/regime-c-960.webp 960w" sizes="(max-width: 639px) 92vw, (max-width: 959px) 46vw, 340px" width="640" height="359" loading="lazy" decoding="async" alt="PaveSplat covariances from a novel view: the analytic frame is corrected per pixel, so surfels reorient to pave the surface"><img src="assets/img/figures/regime-c-schema.svg" width="640" height="201" loading="lazy" alt="Schematic: surfels reoriented to pave the surface across the edge"></div><figcaption data-html data-ko="해석적 프레임 + 학습된 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>">analytic frame + learned <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math></figcaption></figure>
+  </div>
+  <aside class="callout" aria-labelledby="why-title">
+    <h3 id="why-title"><svg viewBox="-2 -4 41 8" width="82" height="16" aria-hidden="true"><path d="M-1 1.2H37" stroke="currentColor" stroke-opacity=".5" stroke-width=".9" stroke-linecap="round"/><g class="paving"><ellipse class="a" cx="4" cy="0" rx="5.2" ry="2.3"/><ellipse class="b" cx="11.2" cy="0" rx="5.2" ry="2.3"/><ellipse class="a" cx="18.4" cy="0" rx="5.2" ry="2.3"/><ellipse class="b" cx="25.6" cy="0" rx="5.2" ry="2.3"/><ellipse class="a" cx="32.8" cy="0" rx="5.2" ry="2.3"/></g></svg><span data-ko="왜 “PaveSplat”인가요?">Why “PaveSplat”?</span></h3>
+    <p data-html data-ko="약어가 아니라 비유입니다. 납작하고 길쭉한 surfel이 보이는 표면을 보도블록처럼 깔아 나갑니다. 표면 접선에 맞춰 정렬되고 필요한 곳에서는 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>로 회전하며, 렌더링 해상도가 달라져도 계속 표면을 덮습니다.">A metaphor, not an acronym: flat, elongated surfels tile the visible surface like paving stones — aligned with its tangents, turned by <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math> where needed — and keep paving it across rendering resolutions.</p>
+  </aside>
+
+  <figure class="rail-fig method-rail" aria-label="Method overview" data-ko-label="방법 개요">
+    <div class="rail-panel">
+      <ol class="rail">
+        <li class="rail-step">
+          <span class="rail-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18l5-7 4 4 3-5 6 8z"/><circle cx="16" cy="6" r="2"/></svg></span>
+          <span class="rail-label" data-html data-ko="예측 깊이 <math><mi>z</mi><mo stretchy=&quot;false&quot;>(</mo><mi>u</mi><mo stretchy=&quot;false&quot;>)</mo></math>">Predicted depth <math><mi>z</mi><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></math></span>
+        </li>
+        <li class="rail-step">
+          <span class="rail-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L20 14M4 18l3-9M4 18l7-1.5"/></svg></span>
+          <span class="rail-label"><b data-ko="표면 정렬 prior">Surface-aligned prior</b></span>
+          <span class="rail-text"><span class="rail-math"><math><msub><mi>R</mi><mi>a</mi></msub><mo>=</mo><mo stretchy="false">[</mo><msub><mover><mi>e</mi><mo>^</mo></mover><mn>1</mn></msub><mspace width="0.2em"/><msub><mover><mi>e</mi><mo>^</mo></mover><mn>2</mn></msub><mspace width="0.2em"/><mover><mi>n</mi><mo>^</mo></mover><mo stretchy="false">]</mo></math></span><br><span data-ko="접선 정렬 프레임">tangent-aligned frame</span></span>
+        </li>
+        <li class="rail-step is-pair">
+          <span class="rail-part"><span class="rail-label"><b data-ko="평면 내 스케일 배수">In-plane scale multipliers</b></span><span class="rail-math"><math><msub><mi>s</mi><mi>i</mi></msub><mo>=</mo><msub><mover><mi>s</mi><mo>¯</mo></mover><mi>i</mi></msub><mspace width="0.1em"/><msub><mi>m</mi><mi>i</mi></msub></math></span></span>
+          <span class="rail-part is-res"><span class="rail-label"><b data-html data-ko="잔차 방향 보정 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>">Residual reorientation <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math></b></span><span class="rail-text" data-ko="항등 초기화">identity-initialized</span></span>
+        </li>
+        <li class="rail-step">
+          <span class="rail-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="4.5" transform="rotate(-20 12 12)"/><circle cx="12" cy="12" r="1.5"/></svg></span>
+          <span class="rail-label"><b data-ko="최종 공분산">Final covariance</b></span>
+          <span class="rail-text"><span class="rail-math"><math><mi>R</mi><mo>=</mo><msub><mi>R</mi><mi>a</mi></msub><mspace width="0.1em"/><msub><mi>R</mi><mi mathvariant="normal">Δ</mi></msub><mo stretchy="false">(</mo><mi mathvariant="normal">Δ</mi><mi>q</mi><mo stretchy="false">)</mo><mo>,</mo></math> <math><mi mathvariant="normal">Σ</mi><mo>=</mo><mi>R</mi><mspace width="0.1em"/><mi>diag</mi><mo stretchy="false">(</mo><msub><mi>s</mi><mn>1</mn></msub><mo>,</mo><msub><mi>s</mi><mn>2</mn></msub><mo>,</mo><msub><mi>s</mi><mi>ϵ</mi></msub><msup><mo stretchy="false">)</mo><mn>2</mn></msup><msup><mi>R</mi><mo>⊤</mo></msup></math></span></span>
+        </li>
+        <li class="rail-step">
+          <span class="rail-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M9 4v14M15 4v14"/></svg></span>
+          <span class="rail-label" data-ko="래스터라이저 (변경 없음)">Rasterizer (unchanged)</span>
+        </li>
+      </ol>
+    </div>
+  </figure>
+
+  <div class="cols method-cols">
+    <div class="eqbox"><math display="block" aria-label="q equals q sub a tensor product delta q" data-ko-label="q는 q 아래첨자 a와 델타 q의 텐서곱"><mi>q</mi><mo>=</mo><msub><mi>q</mi><mi>a</mi></msub><mo>⊗</mo><mrow><mi mathvariant="normal">Δ</mi><mi>q</mi></mrow></math><span data-html data-ko="<math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi><mo>=</mo></math> 초기화 시 항등"><math><mi mathvariant="normal">Δ</mi><mi>q</mi><mo>=</mo></math> identity at initialization</span></div>
+    <ul class="bullets">
+      <li data-html data-ko="<b>표면 정렬 prior:</b> 평면 내 축이 측정된 접선을 따르므로, 비등방 반지름이 측정된 방향에서 그대로 작용합니다."><b>Surface-aligned prior:</b> in-plane axes follow the measured tangents, so the anisotropic radii act where they were measured.</li>
+      <li data-html data-ko="<b>잔차 방향 보정 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>:</b> 새로 학습하는 유일한 공분산 파라미터로, 파라미터 9,512개(모델의 &lt;0.05%), 인코더 시간 +2%입니다."><b>Residual reorientation <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math>:</b> the only new learned covariance parameter — 9,512 parameters (&lt;0.05% of the model), +2% encoder time.</li>
+      <li data-html data-ko="<b>항등 초기화:</b> 학습은 정확히 해석적 프레임에서 시작하고, 렌더링이 필요로 하는 곳에서만 surfel을 회전합니다."><b>Identity-initialized:</b> training starts exactly at the analytic frame and rotates a surfel only where rendering asks for it.</li>
+    </ul>
+  </div>
+</div></div></section>
+
+<section id="results" aria-labelledby="results-title"><div class="wrap"><div class="card">
+  <div class="panel-head"><span class="disc" aria-hidden="true">3</span><h2 id="results-title" data-ko="결과: 고해상도 재렌더링에 강건">Results: robust high-resolution re-rendering</h2></div>
+  <div class="cols">
+    <div>
+      <figure class="plot"><h3 class="panel-title" data-ko="RealEstate10K — 렌더 배율별 PSNR">RealEstate10K — PSNR vs. render scale</h3><div class="plot-svg" id="plot-re10k" data-plot="re10k"></div><figcaption data-ko="본문 표 1의 1×–8×(256²–2048²) PSNR. ‡ 동일 레시피 재현.">PSNR from main Tab. 1 at 1×–8× (256² to 2048²). ‡ same-recipe reproduction.</figcaption></figure>
+      <dl class="stats">
+        <div class="stat"><dt data-html data-ko="<b>픽셀당 단일 Gaussian</b> 방법 가운데 모든 배율에서 가장 좋은 PSNR, SSIM, LPIPS">best PSNR, SSIM &amp; LPIPS among <b>single-Gaussian-per-pixel</b> methods at every scale</dt><dd>1×–8×</dd></div>
+      </dl>
+    </div>
+    <div>
+      <figure class="plot"><h3 class="panel-title" data-ko="Zero-shot DL3DV (RealEstate10K로 학습)">Zero-shot DL3DV (trained on RealEstate10K)</h3><div class="plot-svg" id="plot-dl3dv" data-plot="dl3dv"></div><figcaption data-ko="본문 표 2의 PSNR.">PSNR from main Tab. 2.</figcaption></figure>
+      <p class="plot-note" data-html data-ko="PaveSplat은 픽셀당 단일 Gaussian 방법 가운데 모든 배율에서 <b>PSNR이 가장 높습니다</b>. Zero-shot ScanNet: 1×에서는 약간 뒤지고(−0.10 dB), 8×에서는 앞섭니다(+2.511 dB).">PaveSplat <b>leads PSNR</b> among single-Gaussian-per-pixel methods at every scale. Zero-shot ScanNet: slightly behind at 1× (−0.10 dB), ahead at 8× (+2.511 dB).</p>
+    </div>
+  </div>
+  <details class="more"><summary data-ko="전체 표 1">Full Table 1</summary><div id="re10k-table"></div></details>
+  <details class="more"><summary data-ko="추가 정성 결과 (본문 그림 3, 보충 자료 그림 2)">More qualitative results (main Fig. 3, supp Fig. 2)</summary>
+    <figure class="figure"><div class="native-composite" role="region" aria-label="Main qualitative figure" data-ko-label="본문 정성 비교 그림"><img src="assets/img/figures/qualitative.webp" width="1057" height="1282" loading="lazy" decoding="async" alt="RealEstate10K scenes with two inputs, ground truth, DepthSplat, SurfSplat and PaveSplat; native renders above boxed 8× crops."></div>
+    <figcaption class="caption" data-ko="그림 3: RealEstate10K 정성 비교. 장면마다 입력, ground truth, DepthSplat [18], SurfSplat [7], PaveSplat 순이며, 윗줄 = 원래 해상도 전체 프레임 렌더링(크롭 영역 표시), 아랫줄 = 8× 크롭입니다. 차이가 큰 이 사례들에서 PaveSplat은 얇은 구조를 따라 support를 더 많이 유지합니다.">Fig. 3: Qualitative comparison on RealEstate10K. Per scene: inputs, ground truth, DepthSplat [18], SurfSplat [7], and PaveSplat; top row = full-frame native render (crop boxed), bottom row = 8× crop. In these high-margin cases, PaveSplat keeps more support along thin structures.</figcaption></figure>
+    <figure class="figure"><div class="native-composite" role="region" aria-label="Supplementary qualitative figure" data-ko-label="보충 자료 정성 비교 그림"><img src="assets/img/figures/qualitative-supp.webp" width="1062" height="1282" loading="lazy" decoding="async" alt="Additional RealEstate10K scenes comparing native renders and 8× crops across ground truth and the three methods."></div>
+    <figcaption class="caption" data-ko="보충 자료 그림 2: RealEstate10K 확장 정성 비교. 본문 정성 그림에 없는 추가 장면이며 배치는 같습니다. 장면마다 원래 해상도 전체 프레임 렌더링(1×, 크롭 영역 표시) 아래에 8×(2048²) 재렌더링의 크롭을 두었고, 열은 두 입력 뷰, ground truth, DepthSplat [8], SurfSplat‡ [4](동일 레시피 재현), PaveSplat(제안) 순입니다.">supp Fig. 2: Extended qualitative comparison on RealEstate10K. Additional scenes beyond the main-paper qualitative figure, same layout: per scene, the full-frame native render (1×, crop boxed) above a crop of the 8× (2048²) re-render; columns are the two input views, ground truth, DepthSplat [8], SurfSplat‡ [4] (our same-recipe reproduction), and PaveSplat (ours).</figcaption></figure>
+    <p class="note" data-ko="이 합성 그림의 원본 타일은 폭이 178 px이며, 원래 크기보다 크게 확대하지 않았습니다.">Source tiles in these composites are 178 px wide; they are not upscaled beyond their native size.</p>
+  </details>
+</div></div></section>
+
+<section id="mechanism" aria-labelledby="mechanism-title"><div class="wrap"><div class="card">
+  <div class="panel-head"><span class="disc" aria-hidden="true">4</span><h2 id="mechanism-title" data-ko="왜 작동하는가: 메커니즘 근거">Why it works: mechanism evidence</h2></div>
+  <div class="cols">
+    <div>
+      <figure class="plot"><h3 class="panel-title" data-ko="재렌더링 시 더 적은 커버리지 구멍">Fewer coverage holes when re-rendered</h3><div class="plot-svg" id="plot-holes" data-plot="holes"></div><figcaption data-ko="구멍 = ground truth에는 내용이 있는데 거의 검게(max RGB &lt; 0.02) 렌더링된 픽셀. 테스트 장면 6,474개의 평균.">Hole = pixel rendered near-black (max RGB &lt; 0.02) where the ground truth has content; mean over 6,474 test scenes.</figcaption></figure>
+      <h3 class="panel-title abl-title" data-ko="설계 경로 (행마다 동일한 레시피)">Design path (identical recipe per row)</h3>
+      <div class="table-wrap" role="region" aria-labelledby="abl-cap" tabindex="0"><table class="results abl">
+        <caption id="abl-cap"><span class="cap-inner" data-html data-ko="마지막 단계는 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>만 바꾸므로 잔차의 효과만 분리해 보여 줍니다 (1단계에서는 본 연구의 카메라 공간 정식화도 함께 적용합니다).">The last step changes only <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math>, so it isolates the residual (step 1 also adopts our camera-space formulation).</span></caption>
+        <thead><tr><th scope="col" data-ko="구성">Configuration</th><th scope="col"><math><msub><mi>s</mi><mi>min</mi></msub><mo>/</mo><msub><mi>s</mi><mi>max</mi></msub></math> ↓</th><th scope="col" data-ko="구멍 8× ↓">holes 8× ↓</th><th scope="col">PSNR 8× ↑</th></tr></thead>
+        <tbody><tr><th scope="row" data-ko="SurfSplat‡ (동일 레시피, 법선만 쓰는 프레임)">SurfSplat‡ (same recipe, normal-only frame)</th><td>0.667</td><td>1.00%</td><td>23.342</td></tr>
+        <tr><th scope="row" data-ko="+ 접선 정렬 프레임">+ tangent-aligned frame</th><td>0.580</td><td>1.11%</td><td>23.850</td></tr>
+        <tr class="ours"><th scope="row" data-html data-ko="+ 잔차 <math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math> (제안)">+ residual <math><mi mathvariant="normal">Δ</mi><mi>q</mi></math> (ours)</th><td>0.585</td><td>0.78%</td><td>24.266</td></tr></tbody>
+      </table></div>
+    </div>
+    <div>
+      <h3 class="panel-title dq-title" data-html data-ko="<math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>는 항등으로 붕괴하지 않고 실제로 쓰입니다"><math><mi mathvariant="normal">Δ</mi><mi>q</mi></math> is used — it does not collapse to identity</h3>
+      <div class="dq">
+        <div class="dq-grid">
+          <img src="assets/img/figures/dq-input-redroom.webp" width="264" height="266" loading="lazy" decoding="async" alt="Input view: red room with a glazed door">
+          <img src="assets/img/figures/dq-input-hallway.webp" width="264" height="266" loading="lazy" decoding="async" alt="Input view: hallway with an open door">
+          <img src="assets/img/figures/dq-map-redroom.webp" width="264" height="266" loading="lazy" decoding="async" alt="Residual angle map of the red room: bright along the door frame and object edges">
+          <img src="assets/img/figures/dq-map-hallway.webp" width="264" height="266" loading="lazy" decoding="async" alt="Residual angle map of the hallway: bright along the door edges and the floor at grazing angles">
+          <div class="dq-bar" role="img" aria-label="Colour scale from 0° to 28.6°" data-ko-label="0°부터 28.6°까지의 색상 척도"><span></span><span>28.6°</span><span>0°</span></div>
+        </div>
+        <div>
+          <p data-html data-ko="평균 잔차 각도 <b>0.160 rad (≈9.1°)</b>, p99 1.073 rad (≈61.5°)이며, <b>깊이 불연속과 비스듬한 표면</b>에 집중됩니다.">Mean residual angle <b>0.160 rad (≈9.1°)</b>, p99 1.073 rad (≈61.5°), concentrated at <b>depth discontinuities and grazing surfaces</b>.</p>
+          <p class="caption" data-html data-ko="위: 입력 · 아래: 잔차 각도 <span class=&quot;nowrap&quot;>|<math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>|</span>">top: input · bottom: residual angle <span class="nowrap">|<math><mi mathvariant="normal">Δ</mi><mi>q</mi></math>|</span></p>
+        </div>
+      </div>
+      <aside class="callout caution scope" aria-labelledby="scope-title">
+        <h3 id="scope-title" data-ko="범위와 한계">Scope &amp; limits</h3>
+        <ul class="bullets">
+          <li data-html data-ko="2×–8× 재렌더링은 실제 고해상도 촬영이 아니라 <b>커버리지 스트레스 테스트</b>입니다.">2×–8× re-rendering is a <b>coverage stress test</b>, not native high-resolution capture.</li>
+          <li data-html data-ko="원래 해상도에서의 이득은 <b>작습니다</b>. RealEstate10K 지표는 포화에 가깝습니다.">Native-resolution gain is <b>small</b>; RealEstate10K metrics are near saturation.</li>
+          <li data-html data-ko="도메인이 먼 야외 데이터 <b>ACID</b>: 원래 해상도에서는 동률(+0.04 dB), 4×에서는 뒤처집니다(−1.40 dB).">Far-domain outdoor <b>ACID</b>: tied at native (+0.04 dB), behind at 4× (−1.40 dB).</li>
+          <li data-html data-ko="<math><mi mathvariant=&quot;normal&quot;>Δ</mi><mi>q</mi></math>는 <b>깊이가 아니라 방향</b>을 조정합니다. Zero-shot ScanNet의 법선 오차가 조금 낮아집니다(중앙값 36.32° → 35.07°)."><math><mi mathvariant="normal">Δ</mi><mi>q</mi></math> adapts <b>orientation, not depth</b>: zero-shot ScanNet normal error is modestly lower (median 36.32° → 35.07°).</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+  <details class="more" id="coverage-details-outer"><summary data-ko="장면별 중앙값 (본문 그림 4a)">Per-scene medians (main Fig. 4a)</summary>
+    <figure class="figure">
+      <div id="coverage"></div>
+      <noscript><img src="assets/img/figures/coverage.svg" alt="Paper Fig. 4: coverage-hole rate across render scales and its per-scene distribution at 8×."></noscript>
+      <figcaption class="caption" data-ko="본문 그림 4a — PaveSplat은 고해상도 재렌더링에서 커버리지 구멍을 더 적게 남깁니다(RealEstate10K). 커버리지 구멍 비율(black-hole 비율) = GT에 내용이 있는 곳(max 채널 &gt;0.02)에서 거의 검게(max RGB 채널 &lt;0.02) 렌더링되는 픽셀의 비율.">main Fig. 4a — PaveSplat leaves fewer coverage holes under high-resolution re-rendering (RealEstate10K). The coverage-hole rate (black-hole fraction) = share of pixels rendering near-black (max RGB channel &lt;0.02) where the GT has content (max channel &gt;0.02).</figcaption>
+      <p id="coverage-note" class="note"></p>
+      <details id="coverage-details"><summary data-ko="커버리지 데이터: 중앙값과 평균">Coverage data: medians and means</summary><div id="coverage-table"></div></details>
+    </figure>
+  </details>
+</div></div></section>
+
+<section id="bibtex" aria-labelledby="bibtex-title"><div class="wrap"><div class="card">
+  <h2 id="bibtex-title">BibTeX</h2>
+  <div class="codeblock"><pre tabindex="0" aria-label="BibTeX entry" data-ko-label="BibTeX 항목"><code id="citation">@inproceedings{kim2026pavesplat,
+  title     = {PaveSplat: Resolution-Robust Feed-Forward Gaussian Splatting with Residually Corrected Surface-Aligned Covariances},
+  author    = {Janghun Kim and Hyun-Cheol Kim and Eunbin An and Myeonghun Oh and Hyon-Gon Choo},
+  booktitle = {Proceedings of the Asian Conference on Computer Vision (ACCV)},
+  year      = {2026}
+}</code></pre><button class="copy" type="button" data-ko="BibTeX 복사">Copy BibTeX</button><p class="copy-status note" role="status"></p></div>
+</div></div></section>
+<noscript><p class="wrap">Enable JavaScript to see the plots, play the video and read the result tables. The manifests are available in the data folder.</p></noscript>
+</main>
+<footer><div class="wrap">
+  <p class="ack" data-ko="감사의 글. 이 연구는 정부의 재원으로 한국전자통신연구원(ETRI)의 지원을 받아 수행되었습니다 [26ZC1100, Development of Spatial Media Technology and Interaction Technology for Convergence of the Real and Virtual World].">Acknowledgement. This work was supported by Electronics and Telecommunications Research Institute (ETRI) grant funded by the Korean government [26ZC1100, Development of Spatial Media Technology and Interaction Technology for Convergence of the Real and Virtual World].</p>
+  <p data-ko="SurfSplat(ICLR 2026)과 DepthSplat(CVPR 2025)을 바탕으로 하며, surfel 정식화는 2DGS(SIGGRAPH 2024)를 따릅니다.">Builds on SurfSplat (ICLR 2026) and DepthSplat (CVPR 2025); surfel formulation of 2DGS (SIGGRAPH 2024).</p>
+  <p data-ko="© 2026 Janghun Kim, ETRI · 코드 CC BY-NC-SA 4.0 · 모델 가중치 CC BY-NC 4.0 · 로고의 권리는 각 소유자에게 있습니다 · Lato 글꼴은 SIL Open Font License 1.1을 따릅니다">© 2026 Janghun Kim, ETRI · Code CC BY-NC-SA 4.0 · Model weights CC BY-NC 4.0 · Logos belong to their owners · Lato font under the SIL Open Font License 1.1</p>
+  <p><span data-ko="연락처:">Contact:</span> <a href="mailto:janghun@etri.re.kr">janghun@etri.re.kr</a></p>
+  <p data-ko-only hidden lang="ko">이 페이지에는 에스코어가 제공한 에스코어 드림 폰트가 적용되어 있습니다.</p>
+</div></footer>
+<script id="results-data" type="application/json" data-source="data/results.json">{"re10k":{"caption":"main Tab. 1 — Novel view synthesis on RealEstate10K across render resolutions. All cells are our measurements on the common index; multi-Gaussian methods (pixelSplat, HiSplat) are ruled off above the single-Gaussian-per-pixel group. SurfSplat‡: our same-recipe reproduction.","columns":["Method","1× PSNR ↑","1× SSIM ↑","1× LPIPS ↓","2× PSNR ↑","2× SSIM ↑","2× LPIPS ↓","4× PSNR ↑","4× SSIM ↑","4× LPIPS ↓","8× PSNR ↑","8× SSIM ↑","8× LPIPS ↓"],"groupBreakBefore":["MVSplat"],"rows":[["pixelSplat","26.073","0.864","0.136","25.262","0.855","0.208","24.378","0.864","0.275","24.003","0.898","0.280"],["HiSplat","27.194","0.882","0.117","25.097","0.867","0.191","24.097","0.876","0.244","23.816","0.910","0.248"],["MVSplat","26.387","0.869","0.128","20.294","0.808","0.279","17.882","0.754","0.421","17.195","0.770","0.438"],["TranSplat","26.688","0.875","0.125","20.499","0.814","0.275","18.071","0.760","0.423","17.383","0.776","0.438"],["DepthSplat","27.506","0.890","0.112","19.914","0.772","0.332","16.299","0.631","0.491","15.079","0.619","0.508"],["SurfSplat‡","27.519","0.892","0.112","26.366","0.868","0.205","24.863","0.842","0.316","23.342","0.852","0.359"],["PaveSplat","27.686","0.893","0.109","26.493","0.869","0.198","25.182","0.848","0.296","24.266","0.867","0.336"]]}}</script>
+<script id="coverage-data" type="application/json" data-source="data/coverage.json">{"description":"RealEstate10K coverage-hole (black-hole) fraction: share of pixels rendering near-black (max RGB channel \u003c0.02) where the GT has content (max channel >0.02). Per-scene statistics over the test set; values are fractions. Source: main Fig. 4.","scales":[1,2,4,8],"PaveSplat":{"black":[0.00027812211847101165,0.000457435874746441,0.002720327584857376,0.007837290057415881],"black_med":[0.0,7.62939453125e-06,0.00015703837561886758,0.0005211432871874422],"black_p25":[0.0,0.0,2.6702880859375e-05,0.00012153387251601089],"black_p75":[0.0,9.282430255552754e-05,0.0009755293867783621,0.0024791956529952586]},"SurfSplat":{"black":[0.0003380801574423645,0.0005194360008025432,0.0029360046102063424,0.010044840897473963],"black_med":[0.0,1.3987223610456567e-05,0.0005550384521484375,0.0021888812771067023],"black_p25":[0.0,0.0,0.00012437503391993232,0.0005710522382287309],"black_p75":[5.086263172415784e-06,0.000125885009765625,0.0022741954308003187,0.008180280914530158]},"DepthSplat":{"black":[0.00021392159820258087,0.001702624829174016,0.019211110092634973,0.04290589668946566],"black_med":[0.0,1.52587890625e-05,0.0019062360515818,0.006560166832059622],"black_p25":[0.0,0.0,0.000186920166015625,0.0009654363384470344],"black_p75":[0.0,0.0004450480337254703,0.013835907215252519,0.03777321334928274]}}</script>
+<script id="poster-data" type="application/json" data-source="data/poster.json">{"description":"Poster plots redrawn from the paper tables. Values are printed strings; 'row' is only the vertical position (in plot units) of an end label, nudged apart where lines end close together.","scales":["1×","2×","4×","8×"],"plots":{"re10k":{"source":"main Tab. 1","title":"RealEstate10K PSNR (dB) versus render scale","unit":"dB","ylabel":"PSNR (dB)","ymin":14,"ymax":29,"ticks":[15,20,25],"height":260,"series":[{"method":"MVSplat","style":"mv","values":["26.387","20.294","17.882","17.195"]},{"method":"TranSplat","style":"tran","values":["26.688","20.499","18.071","17.383"]},{"method":"DepthSplat","style":"depth","values":["27.506","19.914","16.299","15.079"]},{"method":"SurfSplat‡","style":"surf","values":["27.519","26.366","24.863","23.342"]},{"method":"PaveSplat","style":"pave","values":["27.686","26.493","25.182","24.266"]}],"labels":[{"method":"PaveSplat","row":25.0,"value":"24.266"},{"method":"SurfSplat‡","row":22.7,"value":"23.342"},{"method":"TranSplat","row":18.5},{"method":"MVSplat","row":16.7},{"method":"DepthSplat","row":14.9}]},"dl3dv":{"source":"main Tab. 2","title":"Zero-shot DL3DV PSNR (dB) versus render scale, trained on RealEstate10K","unit":"dB","ylabel":"PSNR (dB)","ymin":10,"ymax":30,"ticks":[10,15,20,25,30],"height":260,"series":[{"method":"MVSplat","style":"mv","values":["24.545","18.745","16.322","15.639"]},{"method":"TranSplat","style":"tran","values":["24.711","20.081","18.052","17.485"]},{"method":"DepthSplat","style":"depth","values":["28.145","16.780","12.747","11.529"]},{"method":"SurfSplat‡","style":"surf","values":["27.421","25.495","18.721","14.388"]},{"method":"PaveSplat","style":"pave","values":["28.389","26.714","23.129","20.671"]}],"labels":[{"method":"PaveSplat","row":20.671,"value":"20.671"},{"method":"TranSplat","row":18.35},{"method":"MVSplat","row":16.3},{"method":"SurfSplat‡","row":14.2,"value":"14.388"},{"method":"DepthSplat","row":11.529}]},"holes":{"source":"supp Tab. 3 (mean, ε = 0.02)","title":"Coverage holes (% of pixels, log axis) versus render scale","unit":"%","ylabel":"holes (% of pixels)","log":true,"ymin":0.01,"ymax":10,"ticks":[0.01,0.1,1,10],"height":220,"series":[{"method":"DepthSplat","style":"depth","values":["0.021","0.170","1.921","4.291"]},{"method":"SurfSplat‡","style":"surf","values":["0.034","0.052","0.294","1.004"]},{"method":"PaveSplat","style":"pave","values":["0.028","0.046","0.272","0.784"]}],"labels":[{"method":"DepthSplat","row":4.6,"value":"4.29%"},{"method":"SurfSplat‡","row":1.45,"value":"1.00%"},{"method":"PaveSplat","row":0.43,"value":"0.78%"}]}}}</script>
+<script>
+/* PaveSplat page script (outside the kit block): the classic page's table, poster-plot and coverage-chart
+   renderers, unchanged except for class and colour-token names, reading the same inline manifests.
+   The kit (kit.js) handles theme, video and the BibTeX copy button. */
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const read = name => JSON.parse($(name + '-data').textContent);
+  const results = read('results');
+  const make = (tag, text, cls) => {
+    const el = document.createElement(tag);
+    if (text !== undefined) el.textContent = text;
+    if (cls) el.className = cls;
+    return el;
+  };
+  function table(id, data) {
+    const wrap=make('div',undefined,'table-wrap'), t=make('table',undefined,'results');
+    wrap.tabIndex=0; wrap.setAttribute('role','region'); wrap.setAttribute('aria-label',data.caption);
+    t.append(make('caption',data.caption));
+    const head=make('thead'), hr=make('tr');
+    data.columns.forEach(c => {const th=make('th',c);th.scope='col';hr.append(th);});head.append(hr);t.append(head);
+    const body=make('tbody');
+    data.rows.forEach(row => {
+      const tr=make('tr',undefined,row[0].startsWith('PaveSplat')?'ours':'');
+      if (data.groupBreakBefore?.includes(row[0])) tr.classList.add('group-start');
+      row.forEach((cell,i) => {const td=make(i===0?'th':'td',cell);if(i===0)td.scope='row';tr.append(td);}); body.append(tr);
+    });
+    t.append(body);wrap.append(t);$(id).append(wrap);
+  }
+  table('re10k-table',results.re10k);
+  // Poster plots: redrawn at the container's pixel width so labels keep their CSS size on phones.
+  const PLOT_STYLES = {
+    pave:{stroke:'accent', text:'accent', width:3.5, marker:'circle', size:6.5},
+    surf:{stroke:'compare-text', text:'compare-text', width:2.6, marker:'square', size:5.5},
+    depth:{stroke:'series-other-text', text:'series-other-text', width:2.2, dash:'8 5', marker:'triangle', size:6.5},
+    mv:{stroke:'series-other-text', text:'series-other-text', width:2, dash:'1 5', marker:'diamond', size:5.5},
+    tran:{stroke:'series-other-text', text:'series-other-text', width:2, dash:'1 5', marker:'pentagon', size:5.5}
+  };
+  function marker(kind, x, y, s) {
+    const points = {
+      triangle:[[0,-1.2],[1.05,.65],[-1.05,.65]], diamond:[[0,-1.25],[1.05,0],[0,1.25],[-1.05,0]],
+      pentagon:[0,1,2,3,4].map(k=>[Math.cos((k*72-90)*Math.PI/180),Math.sin((k*72-90)*Math.PI/180)])
+    }[kind];
+    if (kind === 'circle') return ['circle',{cx:x,cy:y,r:s}];
+    if (kind === 'square') return ['rect',{x:x-s,y:y-s,width:2*s,height:2*s}];
+    return ['polygon',{points:points.map(([px,py])=>`${x+px*s},${y+py*s}`).join(' ')}];
+  }
+  function plot(host, key, spec, scales) {
+    const svgNS='http://www.w3.org/2000/svg';
+    const node=(parent,tag,attrs,text)=>{const el=document.createElementNS(svgNS,tag);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));if(text!==undefined)el.textContent=text;parent.append(el);return el;};
+    const unit=spec.unit==='%'?'%':' '+spec.unit;
+    let drawnWidth=0;
+    function draw() {
+      const width=Math.max(260,Math.round(host.clientWidth)), height=spec.height;
+      if (width===drawnWidth) return;
+      drawnWidth=width;
+      const nameW=84, valueW=spec.labels.some(l=>l.value)?54:0;
+      const left=54, right=width-12-nameW-valueW, top=10, bottom=height-36;
+      const scaleY=v=>spec.log?Math.log10(v):v;
+      const y=v=>bottom-(bottom-top)*(scaleY(v)-scaleY(spec.ymin))/(scaleY(spec.ymax)-scaleY(spec.ymin));
+      const x=i=>left+(right-left)*(i+.25)/3.5;
+      const svg=document.createElementNS(svgNS,'svg');
+      Object.entries({viewBox:`0 0 ${width} ${height}`,width,height,role:'img','aria-labelledby':`plot-${key}-title plot-${key}-desc`,'data-plot':key}).forEach(([k,v])=>svg.setAttribute(k,v));
+      node(svg,'title',{id:`plot-${key}-title`},spec.title);
+      node(svg,'desc',{id:`plot-${key}-desc`},spec.series.map(s=>`${s.method}: ${s.values.join(', ')}${unit}`).join('; ')+` at ${scales.join(', ')}. Source: ${spec.source}.`);
+      spec.ticks.forEach(t=>{node(svg,'path',{d:`M${left} ${y(t)}H${right}`,class:'grid'});node(svg,'text',{x:left-8,y:y(t)+4.5,'text-anchor':'end',class:'tick'},String(t));});
+      scales.forEach((s,i)=>{node(svg,'path',{d:`M${x(i)} ${top}V${bottom}`,class:'grid'});node(svg,'text',{x:x(i),y:bottom+20,'text-anchor':'middle',class:'tick'},s);});
+      node(svg,'path',{d:`M${left} ${top}V${bottom}H${right}`,class:'axis'});
+      node(svg,'text',{x:0,y:0,transform:`translate(15 ${(top+bottom)/2}) rotate(-90)`,'text-anchor':'middle',class:'axis-label'},spec.ylabel);
+      for (const series of spec.series) {
+        const style=PLOT_STYLES[series.style], colour=`var(--${style.stroke})`, values=series.values.map(Number);
+        const line=node(svg,'polyline',{points:values.map((v,i)=>`${x(i)},${y(v)}`).join(' '),fill:'none',stroke:colour,'stroke-width':style.width,'stroke-linecap':'round','stroke-linejoin':'round','data-method':series.method});
+        if (style.dash) line.setAttribute('stroke-dasharray',style.dash);
+        values.forEach((v,i)=>{const [tag,attrs]=marker(style.marker,x(i),y(v),style.size);node(svg,tag,{...attrs,fill:colour,class:'marker','stroke-width':1.5});});
+      }
+      for (const label of spec.labels) {
+        const series=spec.series.find(s=>s.method===label.method), style=PLOT_STYLES[series.style], colour=`var(--${style.text})`;
+        const end=y(Number(series.values.at(-1))), row=y(label.row);
+        node(svg,'path',{d:`M${x(3)+9} ${end}L${right+6} ${row}`,stroke:colour,'stroke-width':1,fill:'none'});
+        node(svg,'text',{x:right+9,y:row+4.5,fill:colour,class:'end','data-role':'name'},label.method);
+        if (label.value) node(svg,'text',{x:right+9+nameW,y:row+4.5,fill:colour,class:'end','data-role':'value'},label.value);
+      }
+      host.replaceChildren(svg);
+    }
+    draw();
+    if ('ResizeObserver' in window) new ResizeObserver(draw).observe(host);
+    else window.addEventListener('resize',draw);
+  }
+  const poster=read('poster');
+  document.querySelectorAll('.plot-svg[data-plot]').forEach(host=>plot(host,host.dataset.plot,poster.plots[host.dataset.plot],poster.scales));
+
+  function coverage(data) {
+    const target=$('coverage'), floor=.0001, ceiling=10;
+    const svgNS='http://www.w3.org/2000/svg';
+    const node=(tag,attrs,text) => {const el=document.createElementNS(svgNS,tag);Object.entries(attrs).forEach(([k,v])=>el.setAttribute(k,v));if(text!==undefined)el.textContent=text;return el;};
+    const svg=node('svg',{viewBox:'0 0 660 350',role:'img','aria-labelledby':'coverage-title coverage-description',class:'chart'});
+    svg.append(node('title',{id:'coverage-title'},'Coverage holes: per-scene median, IQR band'),node('desc',{id:'coverage-description'},'Black-hole pixels (%) on a log axis across render scales. Values below '+floor+'% are clamped for display; the data table reports unclamped medians and means.'));
+    const left=80, top=44, width=530, height=216;
+    const x=i=>left+width*i/(data.scales.length-1);
+    const y=value=>top+height*(Math.log10(ceiling)-Math.log10(Math.max(floor,value)))/(Math.log10(ceiling)-Math.log10(floor));
+    svg.append(node('text',{x:left,y:20},'Black-hole pixels (%) · log axis'));
+    for (let exponent=-4;exponent<=1;exponent++) {
+      const tick=10**exponent, py=y(tick);
+      svg.append(node('path',{d:`M${left} ${py}H${left+width}`,class:'grid-line'}),node('text',{x:left-10,y:py+4,'text-anchor':'end'},tick.toFixed(Math.max(0,-exponent))));
+    }
+    svg.append(node('path',{d:`M${left} ${top}V${top+height}H${left+width}`,class:'axis'}));
+    data.scales.forEach((scale,i)=>svg.append(node('text',{x:x(i),y:282,'text-anchor':'middle'},scale+'×')));
+    svg.append(node('text',{x:left+width/2,y:305,'text-anchor':'middle'},'Render scale'));
+    const methods=[['PaveSplat','accent','none'],['SurfSplat','compare-text','8 4'],['DepthSplat','series-other-text','2 4']];
+    // Bands are drawn first so all median lines remain visible above their fills.
+    methods.forEach(([method,token])=>{
+      const series=data[method];
+      const high=series.black_p75.map((v,i)=>[x(i),y(v*100)]);
+      const low=series.black_p25.map((v,i)=>[x(i),y(v*100)]).reverse();
+      svg.append(node('polygon',{points:[...high,...low].map(p=>p.join(',')).join(' '),fill:`var(--${token})`,class:'iqr-band'}));
+    });
+    methods.forEach(([method,token,dash],i)=>{
+      const values=data[method].black_med, color=`var(--${token})`;
+      const line=node('polyline',{points:values.map((v,j)=>`${x(j)},${y(v*100)}`).join(' '),class:'series','data-method':method,stroke:color,'stroke-dasharray':dash});
+      line.append(node('title',{},method+' per-scene median'));svg.append(line);
+      values.forEach((v,j)=>svg.append(node('circle',{cx:x(j),cy:y(v*100),r:3,fill:color})));
+      const lx=left+i*183;
+      svg.append(node('path',{d:`M${lx} 333h22`,class:'legend-line',stroke:color,'stroke-dasharray':dash}));
+      svg.append(node('text',{x:lx+28,y:337},method+(method==='SurfSplat'?'‡':'')));
+    });
+    target.tabIndex=0;target.setAttribute('role','region');target.setAttribute('aria-label','Coverage chart, scroll horizontally on small screens');
+    target.append(svg);
+    $('coverage-note').textContent=`per-scene median, IQR band. Values below ${floor}% (including zeros at 1×) are clamped to ${floor}% for log display only. Table values are unclamped. ‡ same-recipe reproduction.`;
+    const rows=[];
+    methods.forEach(([method])=>data.scales.forEach((scale,i)=>rows.push([
+      method+(method==='SurfSplat'?'‡':''),scale+'×',...['black_med','black','black_p25','black_p75'].map(k=>(data[method][k][i]*100).toFixed(6))
+    ])));
+    table('coverage-table',{caption:'main Fig. 4a — Per-scene medians, means and quartiles in percent, rounded to six decimal places. ‡ same-recipe reproduction.',columns:['Method','Scale','Median (%)','Mean (%)','p25 (%)','p75 (%)'],rows});
+  }
+  coverage(read('coverage'));
+  document.documentElement.dataset.ready='true';
+})();
+</script>
+</body>
+</html>

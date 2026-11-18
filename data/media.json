@@ -1,0 +1,20 @@
+{
+  "videos": [
+    {
+      "id": "supplementary",
+      "poster": "assets/media/supp-poster.webp",
+      "sources": [
+        {
+          "src": "assets/media/pavesplat-video-web.mp4",
+          "type": "video/mp4",
+          "sha256": "bb35705b4797a3f85ee086187f3942a5a296e870a8b75ae84fa9f67ac6c72bf3",
+          "source_sha256": "dd6b869d30bfac76a455c20085017b0d33bb62175bc30c6217a54999d55557de"
+        }
+      ],
+      "autoplay": true,
+      "loop": true,
+      "muted": true,
+      "caption": "Supplementary video (96.7 s): the re-rendering idea (illustration), real re-renders at 1×–8×, coverage holes, test-set results, covariance ellipsoids."
+    }
+  ]
+}

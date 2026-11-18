@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="100" viewBox="0 0 12 100" preserveAspectRatio="none">
+<title>Magma colour scale, 0 at the bottom</title>
+<defs><linearGradient id="magma" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#000004"/><stop offset=".25" stop-color="#51127c"/><stop offset=".5" stop-color="#b73779"/><stop offset=".75" stop-color="#fc8961"/><stop offset="1" stop-color="#fcfdbf"/></linearGradient></defs>
+<rect width="12" height="100" fill="url(#magma)"/>
+</svg>

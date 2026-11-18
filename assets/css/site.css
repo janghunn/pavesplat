@@ -1,0 +1,170 @@
+/* PaveSplat page layer over the Paper & Lamp kit (tokens, accents, base, components): page-only components and
+   layout. Tokens only; the one colour scale that is data, the Δq colour bar, is an image (magma-scale.svg). */
+
+/* ── brand: the 2x2 PaveSplat surfels in the accent (nav brand, masthead mark) ── */
+.pave-mark{fill:var(--accent)}
+.mark.pave-mark .p2{opacity:.55}
+
+/* ── masthead: mark | title | logos + venue (the kit grid without its side-art column) ── */
+.masthead .wrap{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"mark title brand"}
+.masthead .mark{width:clamp(64px,7vw,104px)}
+.title-block .authors{margin-bottom:0}
+/* names never split: span#authors is generated text (no per-name markup), so its width (in em) breaks only after
+   a comma where one line does not fit: 2 lines below 1280 px, 3 below 640 px. The names stay in Lato in Korean too,
+   so the widths hold in both languages. */
+#authors{font-family:var(--font-sans)}
+@media(max-width:1279.98px){#authors{max-width:22em}}
+@media(max-width:639.98px){#authors{max-width:14.9em}}  /* line 1 needs 14.6em; "…Oh, Hyon-" would need 15.25em */
+.corresponding-line a{display:inline-flex;align-items:center;min-height:44px}
+.btns .btn svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.brand-block{display:grid;justify-items:start;gap:var(--s3);align-self:start}
+.masthead .venue .venue-dates{display:block;font-weight:400;font-size:.92em;color:var(--muted)}
+/* ETRI and ACCV 2026 Osaka lockups: dark ink on a transparent ground, so each sits on the same white plate in both
+   themes (hairline border in light only). Logo height 40 / 32 / 28 px at >= 860 / 640-859 / < 640 px. */
+.logo-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+.logo-plate{display:inline-flex;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--on-media)}
+.logo-plate img{width:auto;height:40px}
+:root[data-theme="dark"] .logo-plate{border-color:transparent}
+@media(max-width:1099px){
+  .masthead .wrap{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"mark title" "brand brand"}
+  .brand-block{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3) var(--s4)}
+}
+@media(max-width:859.98px){.logo-plate img{height:32px}}
+@media(max-width:639.98px){.logo-plate img{height:28px}.logo-row{gap:10px 12px}}
+@media(max-width:600px){
+  .masthead .wrap{grid-template-columns:minmax(0,1fr);grid-template-areas:"title" "brand"}
+  .brand-block{gap:var(--s2) var(--s3)}
+  .masthead .btns{gap:var(--s2)}
+  .masthead .btn{padding:0 14px 0 11px}
+}
+
+/* ── top video with its pause/play button (page.js) ── */
+.video-fig{margin:var(--s3) 0 var(--s2)}
+.video-stage{position:relative}
+.video-stage video{border-radius:var(--r)}
+.video-toggle{position:absolute;top:var(--s2);right:var(--s2);z-index:1}
+.video-toggle svg{fill:currentColor;stroke:none}
+.video-toggle .ico-play,.video-toggle.is-paused .ico-pause{display:none}
+.video-toggle.is-paused .ico-play{display:block}
+
+/* ── takeaway band ── */
+#takeaway .band{margin-top:0}
+.band .tldr-label{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase}
+html[lang="ko"] .band .tldr-label{letter-spacing:0}
+
+/* ── shared inside the cards ── */
+.card h3:first-child{margin-top:0}
+.caption math,figcaption math{color:inherit}
+.method-cols,.method-rail{margin-top:var(--s5)}
+
+/* ① hero pair: 8x crops (0,192)-(1408,1856) of the 2048 px renders, with the 1x frame as inset */
+.figure-pair .tile-frame{aspect-ratio:1408/1664;background:var(--media-bg)}
+.tile-frame>img.crop{position:absolute;left:0;top:-11.5385%;width:145.4545%;max-width:none;height:auto}
+.inset{position:absolute;top:4%;right:4%;width:31%;border:2px solid var(--on-media);box-sizing:content-box}
+.inset img{width:100%;height:auto}
+.inset .crop-box{position:absolute;left:0;top:9.375%;width:68.75%;height:81.25%;border:1px dashed var(--on-media)}
+.pill{position:absolute;padding:.1em .45em;border-radius:6px;background:color-mix(in srgb,var(--media-bg) 85%,transparent);color:var(--on-media);font-weight:700;font-size:.85rem;line-height:1.3}
+.inset .pill{left:3px;bottom:3px}
+.tile-frame>.pill{right:6px;bottom:6px}
+
+/* ② three regimes, the name callout, the method rail */
+.regimes{display:grid;gap:var(--s4)}
+@media(min-width:640px){.regimes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:960px){.regimes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.regime{margin:0;text-align:center;min-width:0}
+.regime h4{margin:0 0 var(--s2);font-size:1.05rem;font-weight:700}
+.regime .figure-frame{overflow:hidden;border:2px solid var(--line);border-radius:var(--r);background:var(--on-media)}
+.regime .figure-frame img{width:100%;height:auto}
+.regime figcaption{margin-top:var(--s2)}
+.callout h3{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2) var(--s3)}
+.callout h3 svg{width:72px;height:auto;flex:none}
+.paving ellipse{stroke:var(--accent);stroke-width:.5}
+.paving .a{fill:var(--accent-soft)}
+.paving .b{fill:color-mix(in srgb,var(--accent) 45%,var(--surface))}
+.rail-panel{padding:var(--s3);border:2px solid var(--line);border-radius:var(--r);background:var(--bg)}
+@media(min-width:640px){.rail-panel{padding:var(--s4)}}
+/* the rail: a column on phones, one row from 1024 px; --g is the gap that holds each arrow */
+.rail{--g:22px;position:relative;display:grid;gap:var(--g);margin:0;padding:0;list-style:none}
+.rail-step{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center;padding:12px 14px;border:2px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.rail-ico{grid-row:span 2;display:grid;place-items:center;width:42px;height:42px;border:2px solid var(--accent);border-radius:50%;color:var(--accent)}
+.rail-ico svg{width:20px;height:20px}
+.rail-label{font-size:.92rem;font-weight:700;line-height:1.35}
+.rail-text{color:var(--muted);font-size:.85rem;line-height:1.5}
+.rail-step math{font-size:1.02em}
+.rail-step .rail-math{font-size:.88rem;color:var(--ink);line-height:1.5}
+.rail-step.is-pair{grid-template-columns:minmax(0,1fr)}
+.rail-step.is-pair .rail-part+.rail-part{margin-top:var(--s2);padding-top:var(--s2);border-top:1px dashed var(--control)}
+.rail-part{display:grid;gap:2px}
+.rail-part.is-res{padding:var(--s2);border-radius:var(--r-s);background:var(--accent-tint)}
+.rail-step:not(:last-child)::before{content:"";position:absolute;left:34px;top:100%;width:2px;height:var(--g);background:var(--accent)}
+.rail-step:not(:last-child)::after{content:"";position:absolute;left:30px;top:calc(100% + var(--g) - 9px);width:8px;height:8px;border-right:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(45deg)}
+@media(min-width:1024px){
+  /* the "Final covariance" step carries the widest formula, so it gets the most room */
+  .rail{--g:30px;grid-auto-flow:column;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr) minmax(0,1.6fr) minmax(0,1fr);align-items:stretch}
+  .rail-step{grid-template-columns:minmax(0,1fr);align-content:start;justify-items:start;row-gap:4px;padding:14px}
+  .rail-ico{grid-row:auto;margin-bottom:6px}
+  .rail-step:not(:last-child)::before{left:100%;top:36px;width:var(--g);height:2px}
+  .rail-step:not(:last-child)::after{left:calc(100% + var(--g) - 9px);top:32px;transform:rotate(-45deg)}
+}
+@media(min-width:1024px) and (max-width:1279.98px){.method-rail .rail-panel{padding:var(--s3)}}
+.method-cols .eqbox{margin:0}
+
+/* ③/④ plots (redrawn at the container's pixel width) and the headline stat */
+.plot-svg{min-height:200px;max-width:none}
+.plot-svg .marker{stroke:var(--surface)}
+.plot-svg .end{font-size:12.5px}  /* the renderer keeps 84 px for a method name */
+.plot figcaption{margin-top:var(--s2)}
+.stats{margin:var(--s4) 0 0}
+.stats .stat{flex-direction:row-reverse;justify-content:flex-end;margin:0}
+.stat dd{flex:0 0 auto;margin:0;font:900 clamp(1.6rem,3vw,2.3rem)/1 var(--font-sans);color:var(--accent);white-space:nowrap}
+.stat dt{margin:0}
+.plot-note{margin:var(--s4) 0 0}
+
+/* tables: generated (re10k, coverage) and the static design-path table; .ours = the PaveSplat row */
+.results tr.ours>*,.table-wrap .results tr.ours>:first-child{background:var(--accent-tint);color:var(--accent-strong);font-weight:700}
+.results tr.group-start>*{border-top:2px solid var(--control)}
+.results thead th math{color:inherit}
+.results.abl th:first-child{white-space:normal}
+@media(max-width:1199.98px){.results.abl thead th{white-space:normal;vertical-align:bottom}}
+@media(max-width:600px){.results.abl{font-size:.84rem}.results.abl th,.results.abl td{padding:8px 6px}}
+#re10k-table .results{min-width:980px}
+#coverage-table .results{min-width:560px}
+
+/* collapsibles. The content of a closed details is not painted, yet it keeps boxes where other content is painted.
+   Zero geometry (scale 0, still in layout) keeps contrast audits from sampling the pixels under it; find-in-page and
+   text fragments still match it and open the details. Screen only: print shows the closed abstract (kit rule). */
+@media screen{details:not([open])>:not(summary){transform:scale(0);transform-origin:0 0}}
+details.more figure{margin:var(--s4) 0 0}
+#coverage-details{margin-top:var(--s2)}
+.native-composite img{max-width:100%;height:auto;margin:0 auto;border-radius:var(--r-s);background:var(--on-media)}
+
+/* ④ Δq maps: 2x2 grid + colour bar; the text wraps below when less than 16rem remains */
+.dq{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s4);align-items:flex-start}
+.dq>.dq-grid{flex:0 1 auto;min-width:0}
+.dq>div:last-child{flex:1 1 16rem;min-width:min(16rem,100%)}
+.dq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,256px)) 52px;gap:4px;align-items:stretch}
+.dq-grid img{width:100%;height:auto;aspect-ratio:264/266;grid-column:1;border-radius:4px}
+.dq-grid img:nth-child(even){grid-column:2}
+.dq-grid img:nth-child(n+3){grid-row:2}
+.dq-bar{grid-column:3;grid-row:2;display:grid;grid-template-columns:12px auto;gap:4px;font-size:.8rem;color:var(--muted)}
+.dq-bar span:first-child{grid-row:1/3;background:url('magma-scale.svg') center/100% 100% no-repeat;border:1px solid var(--muted)}
+.dq-bar span:last-child{align-self:end}
+.dq p{margin:0 0 var(--s2)}
+.nowrap{white-space:nowrap}
+.scope{margin-top:var(--s4)}
+
+/* coverage chart (main Fig. 4a) */
+#coverage{max-width:100%;overflow-x:auto}
+.chart{display:block;width:100%;min-width:580px;height:auto;color:var(--muted);font:12px var(--font-body)}
+.chart .axis{stroke:var(--muted);fill:none}
+.chart .series{fill:none;stroke-width:3}
+.chart text{fill:currentColor}
+.chart .grid-line{stroke:var(--line);fill:none}
+/* IQR bands: .10 in light so every median stroke keeps 3:1 over the three-band overlap; dark keeps .14 */
+.chart .iqr-band{fill-opacity:.10}
+:root[data-theme="dark"] .chart .iqr-band{fill-opacity:.14}
+.chart .legend-line{fill:none;stroke-width:3}
+
+/* BibTeX, footer */
+.bib-note{margin:var(--s2) 0 0}
+main>noscript p{margin:var(--s4) auto}
